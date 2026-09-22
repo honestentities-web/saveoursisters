@@ -22048,3 +22048,1357 @@ s0.parentNode.insertBefore(s1,s0);
     </section></div>
     </t>
 </t>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bangladesh 64 District Map</title>
+
+<style>
+
+/* =========================================================
+   MAP CONTAINER
+   ========================================================= */
+
+#bd64-map-wrap{
+  width:100%;
+  max-width:100%;
+  height:auto;
+  background:transparent;
+  overflow:hidden;
+  display:block;
+  line-height:0;
+}
+
+/*
+   SVG নিজস্ব aspect-ratio ধরে রাখবে।
+   তাই Android-এ অপ্রয়োজনীয় vertical space থাকবে না।
+*/
+
+#bd64-map-wrap svg{
+  width:100%;
+  height:auto;
+  aspect-ratio:700 / 900;
+  display:block;
+  overflow:visible;
+  background:transparent;
+}
+
+
+/* =========================================================
+   DISTRICT
+   ========================================================= */
+
+#bd64-map-wrap .district{
+  vector-effect:non-scaling-stroke;
+  transition:filter .12s;
+}
+
+#bd64-map-wrap .district:hover{
+  filter:brightness(0.84);
+}
+
+
+/* =========================================================
+   DISTRICT LABEL LAYER
+   ========================================================= */
+
+#bd64-map-wrap .district-labels{
+  pointer-events:none;
+}
+
+
+/* =========================================================
+   DISTRICT LABEL
+   ========================================================= */
+
+#bd64-map-wrap .district-label{
+  paint-order:stroke;
+  stroke:#000000;
+  stroke-width:3px;
+  stroke-linejoin:round;
+  fill:#FFD700;
+  font-weight:700;
+  pointer-events:none;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width:600px){
+
+  #bd64-map-wrap{
+    width:100%;
+    height:auto;
+    overflow:hidden;
+  }
+
+  #bd64-map-wrap svg{
+    width:100%;
+    height:auto;
+    display:block;
+  }
+
+}
+
+
+/* =========================================================
+   DESKTOP
+   ========================================================= */
+
+@media (min-width:601px){
+
+  #bd64-map-wrap{
+    width:100%;
+    height:auto;
+  }
+
+  #bd64-map-wrap svg{
+    width:100%;
+    height:auto;
+  }
+
+}
+
+</style>
+
+
+<div id="bd64-map-wrap"></div>
+
+
+<script>
+
+/* =========================================================
+   DATA URL
+   ========================================================= */
+
+const DATA_URL =
+"https://gis.dghs.gov.bd/server/rest/services/Hosted/bgd_admbnda_adm2_bbs_20201113/FeatureServer/0/query?where=1%3D1&outFields=adm2_en%2Cadm2_pcode%2Cadm1_en&returnGeometry=true&f=geojson&outSR=4326&maxAllowableOffset=0.00012&geometryPrecision=5";
+
+
+/* =========================================================
+   64 DISTRICT CONFIGURATION
+   ========================================================= */
+
+const CONFIG = {
+
+  version:1,
+
+  width:"100%",
+  height:"auto",
+
+  background:"transparent",
+
+  border:"#ffffff",
+  borderWidth:1.4,
+
+  labelSize:11,
+
+  showLabels:true,
+  responsive:true,
+  tooltip:true,
+
+  hoverOpacity:0.84,
+
+  districts:{
+
+    "BD4001":{
+      color:"#E84A5F",
+      link:"https://honestentities.odoo.com/love-trap-bagerhat",
+      target:"_self",
+      label:"বাগেরহাট"
+    },
+
+    "BD2003":{
+      color:"#6DBA57",
+      link:"https://honestentities.odoo.com/love-trap-bandarban",
+      target:"_self",
+      label:"বান্দরবান"
+    },
+
+    "BD1004":{
+      color:"#6DBA57",
+      link:"https://honestentities.odoo.com/love-trap-barguna",
+      target:"_self",
+      label:"বরগুনা"
+    },
+
+    "BD1006":{
+      color:"#6DBA57",
+      link:"https://honestentities.odoo.com/love-trap-barishal",
+      target:"_self",
+      label:"বরিশাল"
+    },
+
+    "BD1009":{
+      color:"#6DBA57",
+      link:"https://honestentities.odoo.com/love-trap-bhola",
+      target:"_self",
+      label:"ভোলা"
+    },
+
+    "BD5010":{
+      color:"#F0C419",
+      link:"https://honestentities.odoo.com/love-trap-bogura",
+      target:"_self",
+      label:"বগুড়া"
+    },
+
+    "BD2012":{
+      color:"#6DBA57",
+      link:"https://honestentities.odoo.com/love-trap-brahmanbaria",
+      target:"_self",
+      label:"ব্রাহ্মণবাড়িয়া"
+    },
+
+    "BD2013":{
+      color:"#6DBA57",
+      link:"https://honestentities.odoo.com/love-trap-chandpur",
+      target:"_self",
+      label:"চাঁদপুর"
+    },
+
+    "BD2015":{
+      color:"#6DBA57",
+      link:"https://honestentities.odoo.com/love-trap-chattogram",
+      target:"_self",
+      label:"চট্টগ্রাম"
+    },
+
+    "BD4018":{
+      color:"#E84A5F",
+      link:"https://honestentities.odoo.com/love-trap-chuadanga",
+      target:"_self",
+      label:"চুয়াডাঙ্গা"
+    },
+
+    "BD2019":{
+      color:"#6DBA57",
+      link:"https://honestentities.odoo.com/love-trap-cumilla",
+      target:"_self",
+      label:"কুমিল্লা"
+    },
+
+    "BD2022":{
+      color:"#6DBA57",
+      link:"https://honestentities.odoo.com/love-trap-cox-s-bazar",
+      target:"_self",
+      label:"কক্সবাজার"
+    },
+
+    "BD3026":{
+      color:"#73B95C",
+      link:"https://honestentities.odoo.com/love-trap-dhaka",
+      target:"_self",
+      label:"ঢাকা"
+    },
+
+    "BD5527":{
+      color:"#198754",
+      link:"https://honestentities.odoo.com/love-trap-dinajpur",
+      target:"_self",
+      label:"দিনাজপুর"
+    },
+
+    "BD3029":{
+      color:"#73B95C",
+      link:"https://honestentities.odoo.com/love-trap-faridpur",
+      target:"_self",
+      label:"ফরিদপুর"
+    },
+
+    "BD2030":{
+      color:"#6DBA57",
+      link:"https://honestentities.odoo.com/love-trap-feni",
+      target:"_self",
+      label:"ফেনী"
+    },
+
+    "BD5532":{
+      color:"#198754",
+      link:"https://honestentities.odoo.com/love-trap-gaibandha",
+      target:"_self",
+      label:"গাইবান্ধা"
+    },
+
+    "BD3033":{
+      color:"#73B95C",
+      link:"https://honestentities.odoo.com/love-trap-gazipur",
+      target:"_self",
+      label:"গাজীপুর"
+    },
+
+    "BD3035":{
+      color:"#73B95C",
+      link:"https://honestentities.odoo.com/love-trap-gopalganj",
+      target:"_self",
+      label:"গোপালগঞ্জ"
+    },
+
+    "BD6036":{
+      color:"#E84A5F",
+      link:"https://honestentities.odoo.com/love-trap-habiganj",
+      target:"_self",
+      label:"হবিগঞ্জ"
+    },
+
+    "BD4539":{
+      color:"#79B84A",
+      link:"https://honestentities.odoo.com/love-trap-jamalpur",
+      target:"_self",
+      label:"জামালপুর"
+    },
+
+    "BD4041":{
+      color:"#E84A5F",
+      link:"https://honestentities.odoo.com/love-trap-jashore",
+      target:"_self",
+      label:"যশোর"
+    },
+
+    "BD1042":{
+      color:"#6DBA57",
+      link:"https://honestentities.odoo.com/love-trap-jhalakathi",
+      target:"_self",
+      label:"ঝালকাঠি"
+    },
+
+    "BD4044":{
+      color:"#E84A5F",
+      link:"https://honestentities.odoo.com/love-trap-jhenaidah",
+      target:"_self",
+      label:"ঝিনাইদহ"
+    },
+
+    "BD5038":{
+      color:"#F0C419",
+      link:"https://honestentities.odoo.com/love-trap-joypurhat",
+      target:"_self",
+      label:"জয়পুরহাট"
+    },
+
+    "BD2046":{
+      color:"#6DBA57",
+      link:"https://honestentities.odoo.com/love-trap-khagrachari",
+      target:"_self",
+      label:"খাগড়াছড়ি"
+    },
+
+    "BD4047":{
+      color:"#E84A5F",
+      link:"https://honestentities.odoo.com/love-trap-khulna",
+      target:"_self",
+      label:"খুলনা"
+    },
+
+    "BD3048":{
+      color:"#73B95C",
+      link:"https://honestentities.odoo.com/love-trap-kishoreganj",
+      target:"_self",
+      label:"কিশোরগঞ্জ"
+    },
+
+    "BD5549":{
+      color:"#198754",
+      link:"https://honestentities.odoo.com/love-trap-kurigram",
+      target:"_self",
+      label:"কুড়িগ্রাম"
+    },
+
+    "BD4050":{
+      color:"#E84A5F",
+      link:"https://honestentities.odoo.com/love-trap-kushtia",
+      target:"_self",
+      label:"কুষ্টিয়া"
+    },
+
+    "BD2051":{
+      color:"#6DBA57",
+      link:"https://honestentities.odoo.com/love-trap-lakshmipur",
+      target:"_self",
+      label:"লক্ষ্মীপুর"
+    },
+
+    "BD5552":{
+      color:"#198754",
+      link:"https://honestentities.odoo.com/love-trap-lalmonirhat",
+      target:"_self",
+      label:"লালমনিরহাট"
+    },
+
+    "BD3054":{
+      color:"#73B95C",
+      link:"https://honestentities.odoo.com/love-trap-madaripur",
+      target:"_self",
+      label:"মাদারীপুর"
+    },
+
+    "BD4055":{
+      color:"#E84A5F",
+      link:"https://honestentities.odoo.com/magura",
+      target:"_self",
+      label:"মাগুরা"
+    },
+
+    "BD3056":{
+      color:"#73B95C",
+      link:"https://honestentities.odoo.com/love-trap-manikganj",
+      target:"_self",
+      label:"মানিকগঞ্জ"
+    },
+
+    "BD6058":{
+      color:"#E84A5F",
+      link:"https://honestentities.odoo.com/love-trap-moulvibazar",
+      target:"_self",
+      label:"মৌলভীবাজার"
+    },
+
+    "BD4057":{
+      color:"#E84A5F",
+      link:"https://honestentities.odoo.com/love-trap-meherpur",
+      target:"_self",
+      label:"মেহেরপুর"
+    },
+
+    "BD3059":{
+      color:"#73B95C",
+      link:"https://honestentities.odoo.com/love-trap-munshiganj",
+      target:"_self",
+      label:"মুন্সীগঞ্জ"
+    },
+
+    "BD4561":{
+      color:"#79B84A",
+      link:"https://honestentities.odoo.com/love-trap-mymensingh",
+      target:"_self",
+      label:"ময়মনসিংহ"
+    },
+
+    "BD5064":{
+      color:"#F0C419",
+      link:"https://honestentities.odoo.com/love-trap-naogaon",
+      target:"_self",
+      label:"নওগাঁ"
+    },
+
+    "BD4065":{
+      color:"#E84A5F",
+      link:"https://honestentities.odoo.com/love-trap-narail",
+      target:"_self",
+      label:"নড়াইল"
+    },
+
+    "BD3067":{
+      color:"#73B95C",
+      link:"https://honestentities.odoo.com/love-trap-narayanganj",
+      target:"_self",
+      label:"নারায়ণগঞ্জ"
+    },
+
+    "BD3068":{
+      color:"#73B95C",
+      link:"https://honestentities.odoo.com/love-trap-narsingdi",
+      target:"_self",
+      label:"নরসিংদী"
+    },
+
+    "BD5069":{
+      color:"#F0C419",
+      link:"https://honestentities.odoo.com/love-trap-natore",
+      target:"_self",
+      label:"নাটোর"
+    },
+
+    "BD5070":{
+      color:"#F0C419",
+      link:"https://honestentities.odoo.com/love-trap-chapainawabganj",
+      target:"_self",
+      label:"চাঁপাইনবাবগঞ্জ"
+    },
+
+    "BD4572":{
+      color:"#79B84A",
+      link:"https://honestentities.odoo.com/love-trap-netrokona",
+      target:"_self",
+      label:"নেত্রকোণা"
+    },
+
+    "BD5573":{
+      color:"#198754",
+      link:"https://honestentities.odoo.com/love-trap-nilphamari",
+      target:"_self",
+      label:"নীলফামারী"
+    },
+
+    "BD2075":{
+      color:"#6DBA57",
+      link:"https://honestentities.odoo.com/love-trap-noakhali",
+      target:"_self",
+      label:"নোয়াখালী"
+    },
+
+    "BD5076":{
+      color:"#F0C419",
+      link:"https://honestentities.odoo.com/love-trap-pabna",
+      target:"_self",
+      label:"পাবনা"
+    },
+
+    "BD5577":{
+      color:"#198754",
+      link:"https://honestentities.odoo.com/love-trap-panchagarh",
+      target:"_self",
+      label:"পঞ্চগড়"
+    },
+
+    "BD1078":{
+      color:"#6DBA57",
+      link:"https://honestentities.odoo.com/love-trap-patuakhali",
+      target:"_self",
+      label:"পটুয়াখালী"
+    },
+
+    "BD1079":{
+      color:"#6DBA57",
+      link:"https://honestentities.odoo.com/love-trap-pirojpur",
+      target:"_self",
+      label:"পিরোজপুর"
+    },
+
+    "BD3082":{
+      color:"#73B95C",
+      link:"https://honestentities.odoo.com/love-trap-rajbari",
+      target:"_self",
+      label:"রাজবাড়ী"
+    },
+
+    "BD5081":{
+      color:"#F0C419",
+      link:"https://honestentities.odoo.com/love-trap-rajshahi",
+      target:"_self",
+      label:"রাজশাহী"
+    },
+
+    "BD2084":{
+      color:"#6DBA57",
+      link:"https://honestentities.odoo.com/love-trap-rangamati",
+      target:"_self",
+      label:"রাঙামাটি"
+    },
+
+    "BD5585":{
+      color:"#198754",
+      link:"https://honestentities.odoo.com/love-trap-rangpur",
+      target:"_self",
+      label:"রংপুর"
+    },
+
+    "BD4087":{
+      color:"#E84A5F",
+      link:"https://honestentities.odoo.com/love-trap-satkhira",
+      target:"_self",
+      label:"সাতক্ষীরা"
+    },
+
+    "BD3086":{
+      color:"#73B95C",
+      link:"https://honestentities.odoo.com/love-trap-shariatpur",
+      target:"_self",
+      label:"শরীয়তপুর"
+    },
+
+    "BD4589":{
+      color:"#79B84A",
+      link:"https://honestentities.odoo.com/love-trap-sherpur",
+      target:"_self",
+      label:"শেরপুর"
+    },
+
+    "BD5088":{
+      color:"#F0C419",
+      link:"https://honestentities.odoo.com/love-trap-sirajganj",
+      target:"_self",
+      label:"সিরাজগঞ্জ"
+    },
+
+    "BD6090":{
+      color:"#E84A5F",
+      link:"https://honestentities.odoo.com/love-trap-sunamganj",
+      target:"_self",
+      label:"সুনামগঞ্জ"
+    },
+
+    "BD6091":{
+      color:"#E84A5F",
+      link:"https://honestentities.odoo.com/love-trap-sylhet",
+      target:"_self",
+      label:"সিলেট"
+    },
+
+    "BD3093":{
+      color:"#73B95C",
+      link:"https://honestentities.odoo.com/love-trap-tangail",
+      target:"_self",
+      label:"টাঙ্গাইল"
+    },
+
+    "BD5594":{
+      color:"#198754",
+      link:"https://honestentities.odoo.com/love-trap-thakurgaon",
+      target:"_self",
+      label:"ঠাকুরগাঁও"
+    }
+
+  }
+};
+
+
+/* =========================================================
+   MAP ENGINE
+   ========================================================= */
+
+const wrap=document.getElementById("bd64-map-wrap");
+const NS="http://www.w3.org/2000/svg";
+
+
+/* =========================================================
+   ESCAPE
+   ========================================================= */
+
+function esc(s){
+
+  return String(s??"").replace(
+    /[&<>"]/g,
+    c=>({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;"
+    }[c])
+  );
+
+}
+
+
+/* =========================================================
+   DISTRICT KEY
+   ========================================================= */
+
+function key(f){
+
+  return f.properties.adm2_pcode ||
+         f.properties.adm2_en ||
+         f.id;
+
+}
+
+
+/* =========================================================
+   BOUNDS
+   ========================================================= */
+
+function bounds(fc){
+
+  let a=Infinity,
+      b=Infinity,
+      c=-Infinity,
+      d=-Infinity;
+
+
+  function p(x){
+
+    a=Math.min(a,x[0]);
+    c=Math.max(c,x[0]);
+
+    b=Math.min(b,x[1]);
+    d=Math.max(d,x[1]);
+
+  }
+
+
+  function g(x){
+
+    if(x.type==="Polygon"){
+
+      x.coordinates.forEach(
+        r=>r.forEach(p)
+      );
+
+    }
+
+    else{
+
+      x.coordinates.forEach(
+        z=>
+          z.forEach(
+            r=>
+              r.forEach(p)
+          )
+      );
+
+    }
+
+  }
+
+
+  fc.features.forEach(
+    f=>g(f.geometry)
+  );
+
+
+  return{
+    minX:a,
+    minY:b,
+    maxX:c,
+    maxY:d
+  };
+
+}
+
+
+/* =========================================================
+   PROJECT
+   ========================================================= */
+
+function project(fc,W,H,pad){
+
+  const b=bounds(fc);
+
+
+  const s=Math.min(
+    (W-pad*2)/(b.maxX-b.minX),
+    (H-pad*2)/(b.maxY-b.minY)
+  );
+
+
+  const ox=
+    (W-(b.maxX-b.minX)*s)/2;
+
+
+  const oy=
+    (H-(b.maxY-b.minY)*s)/2;
+
+
+  return p=>[
+    (p[0]-b.minX)*s+ox,
+    H-((p[1]-b.minY)*s+oy)
+  ];
+
+}
+
+
+/* =========================================================
+   PATH
+   ========================================================= */
+
+function path(g,pr){
+
+  const r=x=>
+    x.map(
+      (p,i)=>{
+
+        const q=pr(p);
+
+
+        return(
+          (i?"L":"M")+
+          q[0].toFixed(2)+" "+
+          q[1].toFixed(2)
+        );
+
+      }
+    ).join(" ")+" Z";
+
+
+  if(g.type==="Polygon"){
+
+    return g.coordinates
+      .map(r)
+      .join(" ");
+
+  }
+
+
+  return g.coordinates
+    .map(
+      z=>z.map(r).join(" ")
+    )
+    .join(" ");
+
+}
+
+
+/* =========================================================
+   POINT IN RING
+   ========================================================= */
+
+function pointInRing(pt,r){
+
+  let inside=false;
+
+
+  for(
+    let i=0,j=r.length-1;
+    i<r.length;
+    j=i++
+  ){
+
+    const a=r[i],
+          b=r[j];
+
+
+    if(
+      ((a[1]>pt[1])!=(b[1]>pt[1])) &&
+      pt[0] <
+      (b[0]-a[0])*
+      (pt[1]-a[1])/
+      (b[1]-a[1]+1e-15)+
+      a[0]
+    ){
+
+      inside=!inside;
+
+    }
+
+  }
+
+
+  return inside;
+
+}
+
+
+/* =========================================================
+   LABEL POSITION
+   ========================================================= */
+
+function label(g,pr){
+
+  const r=
+    g.type==="Polygon"
+    ?g.coordinates[0]
+    :g.coordinates[0][0];
+
+
+  let x=0,
+      y=0;
+
+
+  r.forEach(p=>{
+
+    x+=p[0];
+    y+=p[1];
+
+  });
+
+
+  let p=[
+    x/r.length,
+    y/r.length
+  ];
+
+
+  if(!pointInRing(p,r)){
+
+    let x0=Infinity,
+        y0=Infinity,
+        x1=-Infinity,
+        y1=-Infinity;
+
+
+    r.forEach(q=>{
+
+      x0=Math.min(x0,q[0]);
+      y0=Math.min(y0,q[1]);
+
+      x1=Math.max(x1,q[0]);
+      y1=Math.max(y1,q[1]);
+
+    });
+
+
+    const c=[
+      (x0+x1)/2,
+      (y0+y1)/2
+    ];
+
+
+    for(let i=0;i<=20;i++){
+
+      const k=i/20;
+
+
+      const q=[
+        p[0]*(1-k)+c[0]*k,
+        p[1]*(1-k)+c[1]*k
+      ];
+
+
+      if(pointInRing(q,r)){
+
+        p=q;
+
+        break;
+
+      }
+
+    }
+
+  }
+
+
+  return pr(p);
+
+}
+
+
+/* =========================================================
+   RENDER MAP
+   ========================================================= */
+
+function render(fc){
+
+  /*
+     Internal SVG coordinate system.
+     Aspect ratio = 700 : 900.
+  */
+
+  const W=700;
+  const H=900;
+
+
+  const pr=project(
+    fc,
+    W,
+    H,
+    12
+  );
+
+
+  const svg=
+    document.createElementNS(
+      NS,
+      "svg"
+    );
+
+
+  svg.setAttribute(
+    "xmlns",
+    NS
+  );
+
+
+  svg.setAttribute(
+    "viewBox",
+    "0 0 "+W+" "+H
+  );
+
+
+  /*
+     Preserve exact map aspect ratio.
+     This prevents Android stretching.
+  */
+
+  svg.setAttribute(
+    "preserveAspectRatio",
+    "xMidYMid meet"
+  );
+
+
+  svg.setAttribute(
+    "role",
+    "img"
+  );
+
+
+  /*
+     SVG itself is transparent.
+  */
+
+  svg.style.background="transparent";
+
+
+  /* =======================================================
+     BACKGROUND
+     ======================================================= */
+
+  const bg=
+    document.createElementNS(
+      NS,
+      "rect"
+    );
+
+
+  bg.setAttribute(
+    "width",
+    "100%"
+  );
+
+
+  bg.setAttribute(
+    "height",
+    "100%"
+  );
+
+
+  bg.setAttribute(
+    "fill",
+    "transparent"
+  );
+
+
+  svg.appendChild(bg);
+
+
+  /* =======================================================
+     LABEL LAYER
+     ======================================================= */
+
+  const labelLayer=
+    document.createElementNS(
+      NS,
+      "g"
+    );
+
+
+  labelLayer.setAttribute(
+    "class",
+    "district-labels"
+  );
+
+
+  /* =======================================================
+     DISTRICTS
+     ======================================================= */
+
+  fc.features.forEach(f=>{
+
+    const k=key(f);
+
+
+    const c=
+      CONFIG.districts[k] || {};
+
+
+    const en=
+      f.properties.adm2_en ||
+      "District";
+
+
+    const name=
+      c.label ||
+      en;
+
+
+    /* =====================================================
+       DISTRICT POLYGON
+       ===================================================== */
+
+    const pth=
+      document.createElementNS(
+        NS,
+        "path"
+      );
+
+
+    pth.classList.add(
+      "district"
+    );
+
+
+    pth.setAttribute(
+      "d",
+      path(
+        f.geometry,
+        pr
+      )
+    );
+
+
+    pth.setAttribute(
+      "fill",
+      c.color || "#6DBA57"
+    );
+
+
+    pth.setAttribute(
+      "stroke",
+      CONFIG.border
+    );
+
+
+    pth.setAttribute(
+      "stroke-width",
+      CONFIG.borderWidth
+    );
+
+
+    pth.setAttribute(
+      "fill-rule",
+      "evenodd"
+    );
+
+
+    /* =====================================================
+       TOOLTIP
+       ===================================================== */
+
+    const title=
+      document.createElementNS(
+        NS,
+        "title"
+      );
+
+
+    title.textContent=
+      name+" — "+en;
+
+
+    pth.appendChild(
+      title
+    );
+
+
+    /* =====================================================
+       DISTRICT LINK
+       ===================================================== */
+
+    const rawHref=
+      c.link || "";
+
+
+    const href=
+      /^(https?:|mailto:|tel:|#|\/\/)/i.test(
+        rawHref
+      )
+      ?rawHref
+      :(rawHref
+        ?new URL(
+            rawHref.replace(/^\/+/,""),
+            location.origin+"/"
+          ).href
+        :"");
+
+
+    if(href){
+
+      const a=
+        document.createElementNS(
+          NS,
+          "a"
+        );
+
+
+      a.setAttribute(
+        "href",
+        href
+      );
+
+
+      a.setAttribute(
+        "target",
+        c.target || "_self"
+      );
+
+
+      if(
+        (c.target || "_self")==="_blank"
+      ){
+
+        a.setAttribute(
+          "rel",
+          "noopener noreferrer"
+        );
+
+      }
+
+
+      a.appendChild(
+        pth
+      );
+
+
+      svg.appendChild(
+        a
+      );
+
+    }
+
+    else{
+
+      svg.appendChild(
+        pth
+      );
+
+    }
+
+
+    /* =====================================================
+       DISTRICT NAME
+       ===================================================== */
+
+    if(CONFIG.showLabels){
+
+      const q=
+        label(
+          f.geometry,
+          pr
+        );
+
+
+      const t=
+        document.createElementNS(
+          NS,
+          "text"
+        );
+
+
+      t.classList.add(
+        "district-label"
+      );
+
+
+      t.setAttribute(
+        "x",
+        q[0]
+      );
+
+
+      t.setAttribute(
+        "y",
+        q[1]
+      );
+
+
+      t.setAttribute(
+        "text-anchor",
+        "middle"
+      );
+
+
+      t.setAttribute(
+        "dominant-baseline",
+        "middle"
+      );
+
+
+      t.setAttribute(
+        "font-size",
+        CONFIG.labelSize
+      );
+
+
+      t.setAttribute(
+        "font-weight",
+        "700"
+      );
+
+
+      t.setAttribute(
+        "fill",
+        "#FFD700"
+      );
+
+
+      t.setAttribute(
+        "stroke",
+        "#000000"
+      );
+
+
+      t.setAttribute(
+        "stroke-width",
+        "3"
+      );
+
+
+      t.setAttribute(
+        "paint-order",
+        "stroke"
+      );
+
+
+      t.setAttribute(
+        "stroke-linejoin",
+        "round"
+      );
+
+
+      t.setAttribute(
+        "pointer-events",
+        "none"
+      );
+
+
+      t.textContent=name;
+
+
+      /*
+         Label layer-এ সবশেষে রাখা হচ্ছে।
+         তাই district নাম সবসময় উপরে থাকবে।
+      */
+
+      labelLayer.appendChild(
+        t
+      );
+
+    }
+
+  });
+
+
+  /* =======================================================
+     LABEL LAYER LAST
+     ======================================================= */
+
+  svg.appendChild(
+    labelLayer
+  );
+
+
+  /* =======================================================
+     INSERT MAP
+     ======================================================= */
+
+  wrap.replaceChildren(
+    svg
+  );
+
+}
+
+
+/* =========================================================
+   LOAD DATA
+   ========================================================= */
+
+fetch(DATA_URL)
+
+  .then(r=>{
+
+    if(!r.ok){
+
+      throw new Error(
+        "HTTP "+r.status
+      );
+
+    }
+
+
+    return r.json();
+
+  })
+
+  .then(render)
+
+  .catch(e=>{
+
+    wrap.textContent=
+      "Map data could not be loaded.";
+
+
+    console.error(e);
+
+  });
+
+</script>
